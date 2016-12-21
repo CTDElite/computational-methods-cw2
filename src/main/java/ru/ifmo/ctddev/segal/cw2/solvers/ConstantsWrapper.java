@@ -29,6 +29,24 @@ public class ConstantsWrapper {
     public final double sigmaW;
     public final double sigmaU;
 
+
+    public ConstantsWrapper(ConstantsWrapper other) {
+        this.dt = other.dt;
+        this.dz = other.dz;
+        this.k = other.k;
+        this.E = other.E;
+        this.alpha = other.alpha;
+        this.h = other.h;
+        this.maxTime = other.maxTime;
+        this.kappa = other.kappa;
+        this.Tm = other.Tm;
+        this.U = other.U;
+        this.sigmaT = other.sigmaT;
+        this.beta = other.beta;
+        this.sigmaW = other.sigmaW;
+        this.sigmaU = other.sigmaU;
+    }
+
     public ConstantsWrapper(double dt, double dz, double h, double maxTime, double k, double e, double alpha) {
         this.dt = dt;
         this.dz = dz;
@@ -57,7 +75,7 @@ public class ConstantsWrapper {
     }
 
     public ConstantsWrapper(double dt, double dz) {
-        this(dt, dz, 0.03, 100);
+        this(dt, dz, 0.03, 300);
     }
 
     public double W (double X, double T) {

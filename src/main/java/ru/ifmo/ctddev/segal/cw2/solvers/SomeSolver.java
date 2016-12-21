@@ -22,6 +22,10 @@ public class SomeSolver extends Solver {
         super(dt, dz);
     }
 
+    public SomeSolver(ConstantsWrapper other) {
+        super(other);
+    }
+
     private double[][] getMatrix(double a, double b, double c) {
         double[][] matrix = new double[size][];
         matrix[0] = new double[]{1, 0};
