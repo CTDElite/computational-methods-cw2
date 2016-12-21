@@ -22,29 +22,8 @@ public class SomeSolver extends Solver {
         super(dt, dz);
     }
 
-    private double[][] getMatrix(double a, double b, double c) {
-        double[][] matrix = new double[size][];
-        matrix[0] = new double[]{1, 0};
-        matrix[size - 1] = new double[]{-1, 1};
-        for (int i = 1; i < size - 1; i++) {
-            matrix[i] = new double[]{a, b, c};
-        }
-        return matrix;
-    }
-
-    public SolutionStep step(SolutionStep prev) {
-        double[][] matrixX = getMatrix(
-                -D / (dz * dz),
-                1 / dt + 2 * D / (dz * dz),
-                -D / (dz * dz)
-        );
-        double[] freeX = new double[size];
-        freeX[0] = 1;
-        freeX[size - 1] = 0;
-        for (int i = 1; i < size - 1; i++) {
-            freeX[i] = W(prev.solX[i], prev.solT[i]) + prev.solX[i] / dt;
-        }
-
+    @Override
+    public double[] stepT(double[] solT, double[] solX) {
         double[][] matrixT = getMatrix(
                 -lambda / (dz * dz),
                 ro * c / dt + 2 * lambda / (dz * dz),
@@ -54,9 +33,34 @@ public class SomeSolver extends Solver {
         freeT[0] = Tm;
         freeT[size - 1] = 0;
         for (int i = 1; i < size - 1; i++) {
-            freeT[i] = -ro * Q * W(prev.solX[i], prev.solT[i]) + ro * c / dt * prev.solT[i];
+            freeT[i] = -ro * Q * W(solX[i], solT[i]) + ro * c / dt * solT[i];
         }
+        return TridiagonalSolver.solve(matrixT, freeT);
+    }
 
-        return new SolutionStep(TridiagonalSolver.solve(matrixT, freeT), TridiagonalSolver.solve(matrixX, freeX));
+    @Override
+    public double[] stepX(double[] solT, double[] solX) {
+        double[][] matrixX = getMatrix(
+                -D / (dz * dz),
+                1 / dt + 2 * D / (dz * dz),
+                -D / (dz * dz)
+        );
+        double[] freeX = new double[size];
+        freeX[0] = 1;
+        freeX[size - 1] = 0;
+        for (int i = 1; i < size - 1; i++) {
+            freeX[i] = W(solX[i], solT[i]) + solX[i] / dt;
+        }
+        return TridiagonalSolver.solve(matrixX, freeX);
+    }
+
+    private double[][] getMatrix(double a, double b, double c) {
+        double[][] matrix = new double[size][];
+        matrix[0] = new double[]{1, 0};
+        matrix[size - 1] = new double[]{-1, 1};
+        for (int i = 1; i < size - 1; i++) {
+            matrix[i] = new double[]{a, b, c};
+        }
+        return matrix;
     }
 }
