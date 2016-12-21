@@ -4,25 +4,25 @@ package ru.ifmo.ctddev.segal.cw2.solvers;
  * Created by Aleksei Latyshev on 21.12.2016.
  */
 
-public class SmartSolver extends Solver {
+public class StupidSolver extends Solver {
 
-    public SmartSolver(double dt, double dz, double h, double maxTime, double k, double e, double alpha) {
+    public StupidSolver(double dt, double dz, double h, double maxTime, double k, double e, double alpha) {
         super(dt, dz, h, maxTime, k, e, alpha);
     }
 
-    public SmartSolver(double dt, double dz, double h, double maxTime, double k, double e) {
+    public StupidSolver(double dt, double dz, double h, double maxTime, double k, double e) {
         super(dt, dz, h, maxTime, k, e);
     }
 
-    public SmartSolver(double dt, double dz, double h, double maxTime) {
+    public StupidSolver(double dt, double dz, double h, double maxTime) {
         super(dt, dz, h, maxTime);
     }
 
-    public SmartSolver(double dt, double dz) {
+    public StupidSolver(double dt, double dz) {
         super(dt, dz);
     }
 
-    public SmartSolver(ConstantsWrapper other) {
+    public StupidSolver(ConstantsWrapper other) {
         super(other);
     }
 

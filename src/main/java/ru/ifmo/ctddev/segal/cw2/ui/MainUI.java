@@ -18,13 +18,9 @@ public class MainUI {
     private JPanel constantsPanel;
     private JTextField dzTextField;
     private JTextField dtTextField;
-    private JLabel hValueLabel;
     private JButton submitButton;
     private JPanel tGraphicPanel;
     private JSlider timeSlider;
-    private JLabel kValueLabel;
-    private JLabel EValueLabel;
-    private JLabel alphaValueLabel;
     private JLabel RValueLabel;
     private JLabel QValueLabel;
     private JLabel T0ValueLabel;
@@ -42,12 +38,14 @@ public class MainUI {
     private JComboBox solverComboBox;
     private JPanel xGraphicPanel;
     private JPanel graphicsPanel;
+    private JTextField hTextField;
+    private JTextField kTextField;
+    private JTextField ETextField;
+    private JTextField alphaTextField;
     private JPanel textFieldsPanel;
     private Function<ConstantsWrapper, ? extends Solver> current;
     private Optional<double[]> cachedX;
     private Optional<Solution> cachedSolution;
-    private int previousTPlotId = -1;
-    private Map<Integer, Plot> plotMap = new HashMap<>();
 
     private static String formatDouble(double d) {
         if (d < 1e-3) {
@@ -78,10 +76,10 @@ public class MainUI {
         dtTextField.setText(String.format("%f", constantsWrapper.dt));
         dzTextField.setText(String.format("%f", constantsWrapper.dz));
 
-        hValueLabel.setText(formatDouble(constantsWrapper.h));
-        kValueLabel.setText(formatDouble(constantsWrapper.k));
-        EValueLabel.setText(formatDouble(constantsWrapper.E));
-        alphaValueLabel.setText(formatDouble(constantsWrapper.alpha));
+        hTextField.setText(formatDouble(constantsWrapper.h));
+        kTextField.setText(formatDouble(constantsWrapper.k));
+        ETextField.setText(formatDouble(constantsWrapper.E));
+        alphaTextField.setText(formatDouble(constantsWrapper.alpha));
         RValueLabel.setText(formatDouble(constantsWrapper.R));
         QValueLabel.setText(formatDouble(constantsWrapper.Q));
         T0ValueLabel.setText(formatDouble(constantsWrapper.T0));
@@ -116,15 +114,6 @@ public class MainUI {
             Solution solution = solver.solve();
             double[] x = new double[solver.size];
             Arrays.setAll(x, i -> i * cw.dz);
-            Plot2DPanel xPlot = (Plot2DPanel) xGraphicPanel;
-            Plot2DPanel tPlot = (Plot2DPanel) tGraphicPanel;
-            xPlot.removeAllPlots();
-            tPlot.removeAllPlots();
-            plotMap.clear();
-            for (int i = 0; i < solver.sizeTime; i += 10) {
-                int plotId = tPlot.addLinePlot("T old plot", new Color(0, 0, 0, 20), x, solution.solT[i]);
-                plotMap.put(i, tPlot.getPlot(plotId));
-            }
             cachedSolution = Optional.of(solution);
             cachedX = Optional.of(x);
             timeSlider.setMaximum(solver.sizeTime - 1);
@@ -135,9 +124,10 @@ public class MainUI {
             System.out.println(time);
             Plot2DPanel xPlot = (Plot2DPanel) xGraphicPanel;
             Plot2DPanel tPlot = (Plot2DPanel) tGraphicPanel;
+            tPlot.removeAllPlots();
             xPlot.removeAllPlots();
-            plotMap.get(time / 10 * 10).setColor(Color.RED);
-            previousTPlotId = tPlot.addLinePlot("T plot", Color.RED, cachedX.get(), cachedSolution.get().solT[time]);
+            tPlot.addLinePlot("T plot", Color.RED, cachedX.get(), cachedSolution.get().solT[time]);
+            xPlot.addLinePlot("X plot", Color.BLACK, cachedX.get(), cachedSolution.get().solX[time]);
         });
     }
 
@@ -149,6 +139,10 @@ public class MainUI {
     private ConstantsWrapper getConstantsWrapper() {
         double dz = Double.parseDouble(dzTextField.getText());
         double dt = Double.parseDouble(dtTextField.getText());
-        return new ConstantsWrapper(dt, dz);
+        double h = Double.parseDouble(hTextField.getText());
+        double k = Double.parseDouble(kTextField.getText());
+        double E = Double.parseDouble(ETextField.getText());
+        double alpha = Double.parseDouble(alphaTextField.getText());
+        return new ConstantsWrapper(dt, dz, h, 407, k, E, alpha);
     }
 }

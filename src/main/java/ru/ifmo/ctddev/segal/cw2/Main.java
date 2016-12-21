@@ -1,6 +1,7 @@
 package ru.ifmo.ctddev.segal.cw2;
 
 import ru.ifmo.ctddev.segal.cw2.solvers.ConstantsWrapper;
+import ru.ifmo.ctddev.segal.cw2.solvers.StupidSolver;
 import ru.ifmo.ctddev.segal.cw2.solvers.Solver;
 import ru.ifmo.ctddev.segal.cw2.solvers.SomeSolver;
 import ru.ifmo.ctddev.segal.cw2.ui.MainUI;
@@ -37,8 +38,8 @@ public class Main {
         double dt = 0.1;
         double dz = 0.00001;
         List<Function<ConstantsWrapper, ? extends Solver>> solverGenerators =
-                Arrays.asList(SomeSolver::new);
-        List<String> names = Arrays.asList("Some Solver");
+                Arrays.asList(SomeSolver::new, StupidSolver::new);
+        List<String> names = Arrays.asList("Some Solver", "Stupid Solver");
         frame.setContentPane(new MainUI(new ConstantsWrapper(dt, dz), solverGenerators, names).mainPanel);
         frame.setVisible(true);
     }
