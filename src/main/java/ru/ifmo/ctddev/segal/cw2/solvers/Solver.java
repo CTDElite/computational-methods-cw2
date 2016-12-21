@@ -26,6 +26,10 @@ public abstract class Solver extends ConstantsWrapper {
         super(dt, dz);
     }
 
+    public Solver(ConstantsWrapper other) {
+        super(other);
+    }
+
     public Solution solve() {
         double[] stepForT = getInitialStepT();
         double[] stepForX = getInitialStepX();
