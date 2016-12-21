@@ -1,6 +1,7 @@
 package ru.ifmo.ctddev.segal.cw2.ui;
 
 import org.math.plot.Plot2DPanel;
+import org.math.plot.plots.Plot;
 import ru.ifmo.ctddev.segal.cw2.solvers.ConstantsWrapper;
 import ru.ifmo.ctddev.segal.cw2.solvers.Solution;
 import ru.ifmo.ctddev.segal.cw2.solvers.Solver;
@@ -8,9 +9,8 @@ import ru.ifmo.ctddev.segal.cw2.solvers.Solver;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ItemEvent;
-import java.util.Arrays;
+import java.util.*;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Function;
 
 public class MainUI {
@@ -46,9 +46,15 @@ public class MainUI {
     private Function<ConstantsWrapper, ? extends Solver> current;
     private Optional<double[]> cachedX;
     private Optional<Solution> cachedSolution;
+    private int previousTPlotId = -1;
+    private Map<Integer, Plot> plotMap = new HashMap<>();
 
     private static String formatDouble(double d) {
-        return String.format("%.2f", d);
+        if (d < 1e-3) {
+            return String.valueOf(d);
+        } else {
+            return String.format("%.3f", d);
+        }
     }
 
     private static class PrettySolverGenerator {
@@ -69,8 +75,8 @@ public class MainUI {
     public MainUI(ConstantsWrapper constantsWrapper,
                   List<? extends Function<ConstantsWrapper, ? extends Solver>> solverGenerators,
                   List<String> solverNames) {
-        dtTextField.setText(formatDouble(constantsWrapper.dt));
-        dzTextField.setText(formatDouble(constantsWrapper.dz));
+        dtTextField.setText(String.format("%f", constantsWrapper.dt));
+        dzTextField.setText(String.format("%f", constantsWrapper.dz));
 
         hValueLabel.setText(formatDouble(constantsWrapper.h));
         kValueLabel.setText(formatDouble(constantsWrapper.k));
@@ -105,17 +111,20 @@ public class MainUI {
         });
 
         submitButton.addActionListener(e -> {
-            Solver solver = current.apply(constantsWrapper);
+            ConstantsWrapper cw = getConstantsWrapper();
+            Solver solver = current.apply(cw);
             Solution solution = solver.solve();
-            int time = timeSlider.getValue();
             double[] x = new double[solver.size];
-            Arrays.setAll(x, i -> i * constantsWrapper.dz);
+            Arrays.setAll(x, i -> i * cw.dz);
             Plot2DPanel xPlot = (Plot2DPanel) xGraphicPanel;
             Plot2DPanel tPlot = (Plot2DPanel) tGraphicPanel;
             xPlot.removeAllPlots();
             tPlot.removeAllPlots();
-            xPlot.addLinePlot("X plot", Color.RED, x, solution.solX[time]);
-            tPlot.addLinePlot("T plot", Color.BLACK, x, solution.solT[time]);
+            plotMap.clear();
+            for (int i = 0; i < solver.sizeTime; i += 10) {
+                int plotId = tPlot.addLinePlot("T old plot", new Color(0, 0, 0, 20), x, solution.solT[i]);
+                plotMap.put(i, tPlot.getPlot(plotId));
+            }
             cachedSolution = Optional.of(solution);
             cachedX = Optional.of(x);
             timeSlider.setMaximum(solver.sizeTime - 1);
@@ -123,17 +132,23 @@ public class MainUI {
 
         timeSlider.addChangeListener(e -> {
             int time = timeSlider.getValue();
+            System.out.println(time);
             Plot2DPanel xPlot = (Plot2DPanel) xGraphicPanel;
             Plot2DPanel tPlot = (Plot2DPanel) tGraphicPanel;
             xPlot.removeAllPlots();
-            tPlot.removeAllPlots();
-            xPlot.addLinePlot("X plot", Color.RED, cachedX.get(), cachedSolution.get().solX[time]);
-            tPlot.addLinePlot("T plot", Color.BLACK, cachedX.get(), cachedSolution.get().solT[time]);
+            plotMap.get(time / 10 * 10).setColor(Color.RED);
+            previousTPlotId = tPlot.addLinePlot("T plot", Color.RED, cachedX.get(), cachedSolution.get().solT[time]);
         });
     }
 
     private void createUIComponents() {
         tGraphicPanel = new Plot2DPanel();
         xGraphicPanel = new Plot2DPanel();
+    }
+
+    private ConstantsWrapper getConstantsWrapper() {
+        double dz = Double.parseDouble(dzTextField.getText());
+        double dt = Double.parseDouble(dtTextField.getText());
+        return new ConstantsWrapper(dt, dz);
     }
 }

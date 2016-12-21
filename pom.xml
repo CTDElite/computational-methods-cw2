@@ -10,6 +10,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.knowm.xchart</groupId>
+            <artifactId>xchart</artifactId>
+            <version>3.2.2</version>
+        </dependency>
+        <dependency>
             <groupId>com.github.yannrichet</groupId>
             <artifactId>JMathPlot</artifactId>
             <version>1.0.1</version>
