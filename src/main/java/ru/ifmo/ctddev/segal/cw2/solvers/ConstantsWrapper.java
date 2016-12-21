@@ -4,7 +4,7 @@ package ru.ifmo.ctddev.segal.cw2.solvers;
  * Created by Aleksei Latyshev
  */
 
-public abstract class ConstantsWrapper {
+public class ConstantsWrapper {
     public final double dt;
     public final double dz;
     public final double k;
