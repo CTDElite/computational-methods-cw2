@@ -31,6 +31,7 @@ public class SmartSolver extends Solver {
         double[][] matrixX = new double[size][];
         matrixX[0] = new double[]{1, 0};
         matrixX[size - 1] = new double[]{-1, 1};
+
         for (int time = 1; time < size - 1; time++) {
             matrixX[time] = new double[]{
                     -D / (dz * dz),
@@ -56,7 +57,7 @@ public class SmartSolver extends Solver {
         for (int time = 1; time < size - 1; time++) {
             matrixT[time] = new double[]{
                     -lambda / (dz * dz),
-                    ro * c / dt + 2 * lambda / (dz * dz) + ro * Q * WMagic(solX[time], solT[time]),
+                    ro * c / dt + 2 * lambda / (dz * dz),
                     -lambda / (dz * dz)
             };
         }
@@ -64,8 +65,8 @@ public class SmartSolver extends Solver {
         double[] freeT = new double[size];
         freeT[0] = Tm;
         freeT[size - 1] = 0;
-        for (int i = 1; i < size - 1; i++) {
-            freeT[i] = ro * c / dt * solT[i];
+        for (int time = 1; time < size - 1; time++) {
+            freeT[time] = ro * c / dt * solT[time] - ro * Q * W(solX[time], solT[time]);
         }
 
         return TridiagonalSolver.solve(matrixT, freeT);
