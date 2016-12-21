@@ -45,6 +45,7 @@ public abstract class ConstantsWrapper {
         beta = R * Tm / E;
         sigmaW = sigmaT * beta;
         sigmaU = D / U;
+        checkConstraints();
     }
 
     public ConstantsWrapper(double dt, double dz, double h, double maxTime, double k, double e) {
@@ -57,5 +58,16 @@ public abstract class ConstantsWrapper {
 
     public ConstantsWrapper(double dt, double dz) {
         this(dt, dz, 1, 100);
+    }
+
+    public double W (double X, double T) {
+        return -k * Math.pow(X, alpha) * Math.exp(-E / (R * T));
+    }
+
+    public void checkConstraints() {
+        // beta << 1
+        // dx <~ sigmaW
+        // h >> sigmaT
+        // todo: print some warnings, if constraints satisfied
     }
 }
