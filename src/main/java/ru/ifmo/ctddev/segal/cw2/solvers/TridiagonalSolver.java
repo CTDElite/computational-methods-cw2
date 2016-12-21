@@ -8,6 +8,12 @@ import java.util.Arrays;
 
 public class TridiagonalSolver {
 
+    private static void IF_DEBUG(boolean condition, String message) {
+        if (!condition) {
+            throw new IllegalStateException(message);
+        }
+    }
+
     /**
      * Solves system.
      *
@@ -20,6 +26,18 @@ public class TridiagonalSolver {
      *
      */
     public static double[] solve(double[][] matrix, double[] free) {
+        IF_DEBUG(matrix[0].length == 2, "matrix[0].length = 2");
+        IF_DEBUG(matrix[matrix.length - 1].length == 2, "matrix[last].length = 2");
+        for (int i = 1; i < matrix.length - 1; i++) {
+            IF_DEBUG(matrix[i].length == 3, "matrix[i].length = 3");
+            for (int j = 0; j < 3; j++) {
+                IF_DEBUG(!Double.isNaN(matrix[i][j]), "matrix[i][j] != NaN");
+            }
+        }
+        IF_DEBUG(matrix.length == free.length, "matrix.length = free.length");
+        for (int i = 0; i < free.length; i++) {
+            IF_DEBUG(!Double.isNaN(free[i]), "free[i] != NaN");
+        }
         double[] A = new double[matrix.length];
         A[0] = -1; // Shouldn't use this
         for (int i = 1; i < matrix.length; i++) {
