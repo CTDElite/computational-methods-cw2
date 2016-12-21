@@ -31,28 +31,38 @@ public abstract class Solver extends ConstantsWrapper {
     }
 
     public Solution solve() {
-        SolutionStep solutionStep = getInitialStep();
+        double[] stepForT = getInitialStepT();
+        double[] stepForX = getInitialStepX();
+
         double[][] solT = new double[sizeTime][size];
         double[][] solX = new double[sizeTime][size];
         for (int time = 0; time < sizeTime; time++) {
-            solT[time] = solutionStep.solT;
-            solX[time] = solutionStep.solX;
-            solutionStep = step(solutionStep);
+            solT[time] = stepForT;
+            solX[time] = stepForX;
+
+            double[] oldStepT = stepForT;
+            stepForT = stepT(oldStepT, stepForX);
+            stepForX = stepX(oldStepT, stepForX);
         }
         return new Solution(solT, solX);
     }
 
-    public abstract SolutionStep step(SolutionStep prev);
+    public abstract double[] stepT(double[] solT, double[] solX);
+    public abstract double[] stepX(double[] solT, double[] solX);
 
-    public SolutionStep getInitialStep() {
+    public double[] getInitialStepT() {
         double[] solT = new double[size];
         Arrays.fill(solT, T0);
         solT[0] = Tm;
 
+        return solT;
+    }
+
+    public double[] getInitialStepX() {
         double[] solX = new double[size];
         Arrays.fill(solX, 1);
         solX[0] = 0;
 
-        return new SolutionStep(solT, solX);
+        return solX;
     }
 }

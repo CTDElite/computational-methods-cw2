@@ -1,7 +1,6 @@
 package ru.ifmo.ctddev.segal.cw2;
 
 import ru.ifmo.ctddev.segal.cw2.solvers.ConstantsWrapper;
-import ru.ifmo.ctddev.segal.cw2.solvers.SolutionStep;
 import ru.ifmo.ctddev.segal.cw2.solvers.Solver;
 import ru.ifmo.ctddev.segal.cw2.solvers.SomeSolver;
 import ru.ifmo.ctddev.segal.cw2.ui.MainUI;
@@ -21,7 +20,13 @@ public class Main {
             super(other);
         }
 
-        public SolutionStep step(SolutionStep prev) {
+        @Override
+        public double[] stepT(double[] solT, double[] solX) {
+            return null;
+        }
+
+        @Override
+        public double[] stepX(double[] solT, double[] solX) {
             return null;
         }
     }
