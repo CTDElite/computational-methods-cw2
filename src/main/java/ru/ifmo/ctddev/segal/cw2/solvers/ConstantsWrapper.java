@@ -57,17 +57,33 @@ public class ConstantsWrapper {
     }
 
     public ConstantsWrapper(double dt, double dz) {
-        this(dt, dz, 1, 100);
+        this(dt, dz, 0.03, 100);
     }
 
     public double W (double X, double T) {
         return -k * Math.pow(X, alpha) * Math.exp(-E / (R * T));
     }
 
+    private static boolean muchLess(double l, double r) {
+        return l * 10 < r;
+    }
+
+    private static boolean lessAndNearlyEqual(double l, double r) {
+        return Math.abs(l - r) < 0.1 && l < r;
+    }
+
     public void checkConstraints() {
         // beta << 1
+        if (!muchLess(beta, 1)) {
+            System.err.printf("beta (%f) should be much less than 1\n", beta);
+        }
         // dx <~ sigmaW
+        if (!lessAndNearlyEqual(dz, sigmaW)) {
+            System.err.printf("dz (%f) should be less and nearly equal to sigmaW (%f)\n", dz, sigmaW);
+        }
         // h >> sigmaT
-        // todo: print some warnings, if constraints satisfied
+        if (!muchLess(sigmaT, h)) {
+            System.err.printf("h (%f) should be much more than sigmaT (%f)\n", h, sigmaT);
+        }
     }
 }

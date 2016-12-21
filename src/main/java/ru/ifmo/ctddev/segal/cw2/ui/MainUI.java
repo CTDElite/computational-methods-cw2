@@ -2,9 +2,13 @@ package ru.ifmo.ctddev.segal.cw2.ui;
 
 import org.math.plot.Plot2DPanel;
 import ru.ifmo.ctddev.segal.cw2.solvers.ConstantsWrapper;
+import ru.ifmo.ctddev.segal.cw2.solvers.Solution;
+import ru.ifmo.ctddev.segal.cw2.solvers.Solver;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ItemEvent;
+import java.util.List;
 
 public class MainUI {
     public JPanel mainPanel;
@@ -32,13 +36,28 @@ public class MainUI {
     private JLabel sigmaWValueLabel;
     private JLabel sigmaUValueLabel;
     private JLabel betaValueLabel;
+    private JComboBox solverComboBox;
     private JPanel textFieldsPanel;
+    private Solver current;
 
     private static String formatDouble(double d) {
         return String.format("%.2f", d);
     }
 
-    public MainUI(ConstantsWrapper constantsWrapper) {
+    private static class PrettySolver {
+        private final Solver solver;
+
+        private PrettySolver(Solver solver) {
+            this.solver = solver;
+        }
+
+        @Override
+        public String toString() {
+            return solver.getClass().getSimpleName();
+        }
+    }
+
+    public MainUI(ConstantsWrapper constantsWrapper, List<? extends Solver> solvers) {
         dtTextField.setText(formatDouble(constantsWrapper.dt));
         dzTextField.setText(formatDouble(constantsWrapper.dz));
 
@@ -60,6 +79,26 @@ public class MainUI {
         betaValueLabel.setText(formatDouble(constantsWrapper.beta));
         sigmaWValueLabel.setText(formatDouble(constantsWrapper.sigmaW));
         sigmaUValueLabel.setText(formatDouble(constantsWrapper.sigmaU));
+
+        for (Solver solver: solvers) {
+            solverComboBox.addItem(new PrettySolver(solver));
+        }
+
+        current = ((PrettySolver) solverComboBox.getSelectedItem()).solver;
+
+        solverComboBox.addItemListener(e -> {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+                current = ((PrettySolver) e.getItem()).solver;
+                System.out.println(current.getClass().getSimpleName());
+            }
+        });
+
+        submitButton.addActionListener(e -> {
+            Solution solution = current.solve();
+            Plot2DPanel plot2DPanel = (Plot2DPanel) graphicPanel;
+            plot2DPanel.addLinePlot("X plot", new Color(255, 0, 0), solution.solX);
+            plot2DPanel.addLinePlot("T plot", new Color(0, 255, 0), solution.solT);
+        });
     }
 
     private void createUIComponents() {
