@@ -82,6 +82,10 @@ public class ConstantsWrapper {
         return -k * Math.pow(X, alpha) * Math.exp(-E / (R * T));
     }
 
+    public double WMagic (double X, double T) {
+        return -k * Math.pow(X, alpha - 1) * Math.exp(-E / (R * T));
+    }
+
     private static boolean muchLess(double l, double r) {
         return l * 10 < r;
     }
