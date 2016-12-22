@@ -49,7 +49,7 @@ public class MainUI {
 
     private static String formatDouble(double d) {
         if (d < 1e-3) {
-            return String.valueOf(d);
+            return String.format("%.3e", d);
         } else {
             return String.format("%.3f", d);
         }
