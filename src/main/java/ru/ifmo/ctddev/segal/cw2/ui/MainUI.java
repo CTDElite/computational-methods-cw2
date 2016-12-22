@@ -143,6 +143,6 @@ public class MainUI {
         double k = Double.parseDouble(kTextField.getText());
         double E = Double.parseDouble(ETextField.getText());
         double alpha = Double.parseDouble(alphaTextField.getText());
-        return new ConstantsWrapper(dt, dz, h, 407, k, E, alpha);
+        return new ConstantsWrapper(dt, dz, h, 500, k, E, alpha);
     }
 }

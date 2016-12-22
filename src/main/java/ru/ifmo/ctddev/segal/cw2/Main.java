@@ -6,6 +6,7 @@ import ru.ifmo.ctddev.segal.cw2.ui.MainUI;
 import javax.swing.*;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Function;
 
 public class Main {
@@ -30,10 +31,11 @@ public class Main {
     }
 
     public static void main(String[] args) {
+        Locale.setDefault(Locale.US);
         JFrame frame = new JFrame("a plot panel");
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        double dt = 0.1;
-        double dz = 0.00001;
+        double dt = 0.01;
+        double dz = 0.0001;
         List<Function<ConstantsWrapper, ? extends Solver>> solverGenerators =
                 Arrays.asList(SomeSolver::new, StupidSolver::new, ExplicitSolver::new);
         List<String> names = Arrays.asList("Implicit Solver", "Implicit+ Solver", "Explicit Solver");
